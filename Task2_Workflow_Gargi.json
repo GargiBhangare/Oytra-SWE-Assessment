@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "e6df41ad-2e11-477d-afda-88691b8d22c9",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://typicode.com",
+        "options": {}
+      },
+      "id": "7dbd7be2-e61b-4cf7-be92-e42bc56209c1",
+      "name": "Fetch Raw Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position":,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().slice(0, 5);"
+      },
+      "id": "9ca1c6db-df8b-4b15-bb82-f5c7112046ff",
+      "name": "Keep Top 5 Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b78b273d-fa3a-4ef8-bde8-d143cc5d94bc",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2de094bd-cc88-4660-84cf-24d1a045763b",
+      "name": "Threshold Split",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 0]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Raw Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Raw Data": {
+      "main": [
+        [
+          {
+            "node": "Keep Top 5 Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Top 5 Items": {
+      "main": [
+        [
+          {
+            "node": "Threshold Split",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
