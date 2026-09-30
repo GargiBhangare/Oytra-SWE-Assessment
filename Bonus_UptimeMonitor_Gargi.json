@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "value": 5
+            }
+          ]
+        }
+      },
+      "id": "b1a1c1d1-e1f1-41a1-b1c1-d1e1f1a1b1c1",
+      "name": "Interval Trigger (5m)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [100, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://realworld.io",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "c2b2a2d2-e2f2-42b2-c2d2-e2f2a2b2c2d2",
+      "name": "Ping Web App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position":,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d3c3b3a3-e3f3-43c3-d3e3-f3a3b3c3d3e3",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e4d4c4b4-a4f4-44d4-e4f4-a4b4c4d4e4f4",
+      "name": "Is Status != 200?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 200]
+    }
+  ],
+  "connections": {
+    "Interval Trigger (5m)": {
+      "main": [
+        [
+          {
+            "node": "Ping Web App",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ping Web App": {
+      "main": [
+        [
+          {
+            "node": "Is Status != 200?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
